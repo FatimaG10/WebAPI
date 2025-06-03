@@ -1,4 +1,5 @@
 ﻿using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services.IServices;
 
@@ -6,6 +7,7 @@ namespace WebAPI.Controllers
 {
 
     //Ruta para que aparezca al cargar la pagina
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
 

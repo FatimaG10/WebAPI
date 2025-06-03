@@ -1,11 +1,13 @@
 ﻿using Domain.DTO;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services.IServices;
 
 namespace WebAPI.Controllers
 {
     //Ruteamos para que aparezcan las opciones al cargar la pagina
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UsuarioController : ControllerBase
@@ -19,6 +21,7 @@ namespace WebAPI.Controllers
             _usuarioServices = usuarioServices;
         }
 
+       
         [HttpGet] //Hace una consulta a la base de datos de los usuarios
         public async Task<IActionResult> GetUsers()
         {
@@ -27,12 +30,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")] //Busco al usuario por el id
-        public async Task<IActionResult> GetById(int id)
-        {
-            return Ok(await _usuarioServices.ById(id));
-        }
-
+     
         [HttpPost] //Hace el envio a la base de datos de la informacion del usuario
         public async Task<IActionResult> Crear(UsuarioRequest request)
         {
@@ -40,6 +38,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+   
         [HttpPut("{id}")] //Le enviamos el id para actualizar especificamente el que tenga ese identificador
         public async Task<IActionResult> Update(int id, [FromBody] UsuarioRequest request)//El objeto (info)
         {
@@ -48,6 +47,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+  
         [HttpDelete("{id}")]//Borra el usuario con el id que se manda
         public async Task<IActionResult> Delete(int id)
         {
