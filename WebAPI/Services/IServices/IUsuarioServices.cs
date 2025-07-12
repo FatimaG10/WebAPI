@@ -15,5 +15,7 @@ namespace WebAPI.Services.IServices
         public Task<Response<string>> Update(int id, UsuarioRequest request);
 
         public Task<Response<string>> Delete(int id);
+
+        public Task<Usuario> CrearUsuarioGoogle(string email, string nombre);
     }
 }

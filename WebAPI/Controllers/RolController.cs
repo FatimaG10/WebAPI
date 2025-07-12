@@ -1,4 +1,5 @@
 ﻿using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services.IServices;
 
@@ -6,6 +7,7 @@ namespace WebAPI.Controllers
 {
 
     //Ruta para que aparezca al cargar la pagina
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
 
@@ -40,7 +42,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")] //Usamos el id para identificar al rol que actualizaremos
-        public async Task<IActionResult> Update(int id, [FromBody] RolRequest request)
+        public async Task<IActionResult> Update(int id, RolRequest request)
         {
             var response = await _rolServices.Update(id, request);
             return Ok(response);
