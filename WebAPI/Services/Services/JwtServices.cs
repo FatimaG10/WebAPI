@@ -19,6 +19,7 @@ namespace WebAPI.Services.Services
         {
             var claims = new[]
             {
+                //Son los datos que viajan dentro del token, el username y el rol
             new Claim(ClaimTypes.Name, username),
             new Claim(ClaimTypes.Role, role)
         };
@@ -27,7 +28,7 @@ namespace WebAPI.Services.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
+                issuer: _configuration["Jwt:Issuer"], //    Las credenciales deben conincidir 
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:DurationInMinutes"])),

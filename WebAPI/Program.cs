@@ -6,29 +6,29 @@ using WebAPI.Context;
 using WebAPI.Services.IServices;
 using WebAPI.Services.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ------------------------
+// CONFIGURACIÓN DE CORS
+// ------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("https://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")));
-
-//Llama a la interfaz, así mismo a los servicios que estan en esa interfaz
-builder.Services.AddTransient<IUsuarioServices, UsuarioServices>();
-builder.Services.AddTransient<IRolServices, RolServices>();
-
-builder.Services.AddTransient<IJwtServices, JwtServices>();
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tu API", Version = "v1" });
 
-    // Define el esquema Bearer
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header usando el esquema Bearer. Ejemplo: \"Bearer {token}\"",
@@ -38,7 +38,6 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Aplica el esquema globalmente
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -58,8 +57,38 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddTransient<IUsuarioServices, UsuarioServices>();
+builder.Services.AddTransient<IRolServices, RolServices>();
+builder.Services.AddTransient<IJwtServices, JwtServices>();
+builder.Services.AddTransient<BanxicoService>();
+builder.Services.AddTransient<CorreoServices>();
+
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
 var app = builder.Build();
+var user = builder.Configuration["EmailSettings:User"];
+
+
+app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())
 {
@@ -70,9 +99,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();  // <-- NECESARIO para validar el token
-app.UseAuthorization();   // <-- Usa los resultados del token
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

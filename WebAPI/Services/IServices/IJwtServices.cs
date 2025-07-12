@@ -2,6 +2,7 @@
 {
     public interface IJwtServices
     {
+        //interfas del generador
         public string GenerateToken(string username, string role);
     }
 }

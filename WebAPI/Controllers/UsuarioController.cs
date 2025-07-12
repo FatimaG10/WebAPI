@@ -40,7 +40,7 @@ namespace WebAPI.Controllers
 
    
         [HttpPut("{id}")] //Le enviamos el id para actualizar especificamente el que tenga ese identificador
-        public async Task<IActionResult> Update(int id, [FromBody] UsuarioRequest request)//El objeto (info)
+        public async Task<IActionResult> Update(int id, UsuarioRequest request)//El objeto (info)
         {
             var response = await _usuarioServices.Update(id, request);
            

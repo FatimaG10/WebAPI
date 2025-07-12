@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")] //Usamos el id para identificar al rol que actualizaremos
-        public async Task<IActionResult> Update(int id, [FromBody] RolRequest request)
+        public async Task<IActionResult> Update(int id, RolRequest request)
         {
             var response = await _rolServices.Update(id, request);
             return Ok(response);

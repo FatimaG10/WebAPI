@@ -131,5 +131,33 @@ namespace WebAPI.Services.Services
                 throw new Exception("Ocurrio un error" + ex.Message);
             }
         }
+
+        //Guarda cuando inicio con Google
+
+        public async Task<Usuario> CrearUsuarioGoogle(string email, string nombre)
+        {
+            var existingUser = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.UserName == email);
+
+            if (existingUser == null)
+            {
+                var newUser = new Usuario
+                {
+                    UserName = email,
+                    Nombre = nombre,
+                    Password = "GOOGLE",  // Valor genérico para no dejarlo nulo
+                    FkRol = 2
+
+                };
+
+                _context.Usuarios.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                return newUser;
+            }
+
+            return existingUser;
+        }
+
     }
 }
